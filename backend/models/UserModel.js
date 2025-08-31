@@ -43,8 +43,7 @@ const userSchema = new Schema(
   }
 );
 
-// Ensure unique index on email
-userSchema.index({ email: 1 }, { unique: true });
+// Note: unique index is already enforced via the email field's `unique: true`.
 
 // Hide internal fields in JSON
 userSchema.set('toJSON', {
