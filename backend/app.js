@@ -8,6 +8,8 @@ import "./models/UserModel.js"; // register model
 import "./models/CategoryModel.js"; // register model
 import "./models/CourseModel.js"; // register model
 import authRoutes from "./routes/authRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
+import courseRoutes from "./routes/courseRoutes.js";
 
 dotenv.config();
 
@@ -22,6 +24,12 @@ if (process.env.NODE_ENV !== "development") {
 
 // Auth routes
 app.use("/api/auth", authRoutes);
+
+// Category routes
+app.use("/api/categories", categoryRoutes);
+
+// Course routes
+app.use("/api/courses", courseRoutes);
 
 // Health check
 app.get("/health", (req, res) => {
