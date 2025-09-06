@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 import "./models/UserModel.js"; // register model
 import "./models/CategoryModel.js"; // register model
 import "./models/CourseModel.js"; // register model
-import authRoutes from "./routes/authRouts.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 

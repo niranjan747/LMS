@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import User from "../models/UserModel.js";
+import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
   try {
@@ -53,7 +54,12 @@ export const registerInstructor = async (req, res) => {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    const user = await User.create({ name, email, passwordHash, role: "instructor" });
+    const user = await User.create({
+      name,
+      email,
+      passwordHash,
+      role: "instructor",
+    });
 
     return res.status(201).json({
       message: "Instructor registered successfully",
@@ -90,15 +96,25 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    return res.status(200).json({
-      message: "User logged in successfully",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
+    // create and return a token (JWT) in a real application
+    const payload = { userId: user.id, role: user.role };
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: "2d" },
+      (err, token) => {
+        if (err) throw err;
+        return res.status(200).json({
+          message: "Login successful",
+          token,
+          user: {
+            name: user.name,
+            id: user.id,
+            role: user.role,
+          },
+        });
+      }
+    );
   } catch (error) {
     return res
       .status(500)
