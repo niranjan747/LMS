@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const RegisterPage: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
@@ -60,20 +62,50 @@ const RegisterPage: React.FC = () => {
     }
 
     setIsLoading(true);
+    setErrors({});
 
     try {
-      // TODO: Implement registration API call
-      console.log('Registration attempt:', {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role
+      // Determine the correct API endpoint based on role
+      const endpoint = formData.role === 'instructor' 
+        ? '/api/auth/register/instructor' 
+        : '/api/auth/register';
+
+      const response = await fetch(`http://localhost:4000${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          role: formData.role,
+        }),
       });
-      // const response = await registerUser(formData);
-      // Handle success - redirect to login or dashboard
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Registration successful - redirect to login page
+        navigate('/login');
+      } else {
+        // Handle registration error
+        if (data.errors && Array.isArray(data.errors)) {
+          // Handle validation errors from backend
+          const newErrors: Record<string, string> = {};
+          data.errors.forEach((error: any) => {
+            if (error.field) {
+              newErrors[error.field] = error.message;
+            }
+          });
+          setErrors(newErrors);
+        } else {
+          setErrors({ general: data.message || 'Registration failed. Please try again.' });
+        }
+      }
     } catch (error) {
       console.error('Registration error:', error);
-      setErrors({ general: 'Registration failed. Please try again.' });
+      setErrors({ general: 'Network error. Please try again later.' });
     } finally {
       setIsLoading(false);
     }
@@ -223,12 +255,13 @@ const RegisterPage: React.FC = () => {
             </div>
 
             <div className="mt-6">
-              <a
-                href="/login"
+              <button
+                type="button"
+                onClick={() => navigate('/login')}
                 className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
               >
                 Sign in instead
-              </a>
+              </button>
             </div>
           </div>
         </div>

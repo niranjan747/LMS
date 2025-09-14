@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import { connectDB } from "./config/db.js";
 import mongoose from "mongoose";
@@ -16,8 +17,17 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
+
+app.use(cookieParser());
+
 if (process.env.NODE_ENV !== "development") {
   app.use(morgan("dev"));
 }
@@ -50,9 +60,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 // DB
-connectDB().catch(() => {
-  // Already logged in connectDB; continue so server can still run without DB
-});
+await connectDB();
 
 // Config
 const PORT = process.env.PORT || 4000;

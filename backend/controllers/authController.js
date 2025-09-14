@@ -78,7 +78,7 @@ export const registerInstructor = async (req, res) => {
 };
 
 export const loginUser = async (req, res) => {
-  try {
+  try {    
     const { email, password } = req.body;
     if (!email || !password) {
       return res
@@ -104,6 +104,15 @@ export const loginUser = async (req, res) => {
       { expiresIn: "2d" },
       (err, token) => {
         if (err) throw err;
+
+        // Set JWT cookie with 24 hours maxAge
+        res.cookie('jwt', token, {
+          maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict'
+        });
+
         return res.status(200).json({
           message: "Login successful",
           token,
@@ -119,5 +128,67 @@ export const loginUser = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Error logging in", error: error.message });
+  }
+};
+
+export const checkAuth = async (req, res) => {
+  try {
+    // Get JWT token from cookies
+    const token = req.cookies.jwt;
+
+    if (!token) {
+      return res.status(401).json({ message: "No authentication token provided" });
+    }
+
+    // Verify the JWT token
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: "Invalid or expired token" });
+      }
+
+      try {
+        // Find the user by ID from the decoded token
+        const user = await User.findById(decoded.userId);
+
+        if (!user) {
+          return res.status(401).json({ message: "User not found" });
+        }
+
+        // Return user information (excluding sensitive data like passwordHash)
+        return res.status(200).json({
+          message: "Authentication successful",
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          },
+        });
+      } catch (error) {
+        return res.status(500).json({ message: "Error fetching user data", error: error.message });
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Authentication check failed", error: error.message });
+  }
+};
+
+export const logoutUser = async (req, res) => {
+  try {
+    // Clear the JWT cookie
+    res.clearCookie('jwt', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+
+    return res.status(200).json({
+      message: "Logout successful"
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error during logout",
+      error: error.message
+    });
   }
 };
