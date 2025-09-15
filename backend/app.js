@@ -8,9 +8,12 @@ import mongoose from "mongoose";
 import "./models/UserModel.js"; // register model
 import "./models/CategoryModel.js"; // register model
 import "./models/CourseModel.js"; // register model
+import "./models/EnrollmentModel.js"; // register model
 import authRoutes from "./routes/authRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import enrollmentRoutes from "./routes/enrollmentRoutes.js";
 
 dotenv.config();
 
@@ -40,6 +43,12 @@ app.use("/api/categories", categoryRoutes);
 
 // Course routes
 app.use("/api/courses", courseRoutes);
+
+// User routes
+app.use("/api/users", userRoutes);
+
+// Enrollment routes
+app.use("/api/enrollments", enrollmentRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

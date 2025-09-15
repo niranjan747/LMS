@@ -26,6 +26,18 @@ const NavBar: React.FC = () => {
             <Link to="/" className="flex-shrink-0">
               <h1 className="text-xl font-bold text-blue-600">LMS</h1>
             </Link>
+            <div className="hidden md:flex items-center space-x-8 ml-8">
+              <Link
+                to="/courses"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                  isActive('/courses')
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                }`}
+              >
+                Courses
+              </Link>
+            </div>
           </div>
 
           <div className="hidden md:flex items-center space-x-8">
@@ -86,6 +98,14 @@ const NavBar: React.FC = () => {
       {/* Mobile menu (hidden by default, would need state management for toggle) */}
       <div className="hidden md:hidden">
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-50">
+          <Link
+            to="/courses"
+            className={`block px-3 py-2 rounded-md text-base font-medium ${
+              isActive('/courses') ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+            }`}
+          >
+            Courses
+          </Link>
           {user ? (
             <>
               <div className="px-3 py-2 text-base font-medium text-gray-700">

@@ -2,9 +2,37 @@ import Course from "../models/CourseModel.js";
 
 export const getCourses = async (req, res) => {
   try {
-    const courses = await Course.find()
+    const { search, category, minPrice, maxPrice } = req.query;
+
+    // Build query object
+    let query = {};
+
+    // Search filter
+    if (search) {
+      query.title = { $regex: search, $options: 'i' };
+    }
+
+    // Category filter
+    if (category) {
+      query.category = category;
+    }
+
+    // Price range filter
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) {
+        query.price.$gte = parseFloat(minPrice);
+      }
+      if (maxPrice) {
+        query.price.$lte = parseFloat(maxPrice);
+      }
+    }
+
+    const courses = await Course.find(query)
       .populate("category", "name")
-      .populate("instructor", "name");
+      .populate("instructor", "name email")
+      .sort({ createdAt: -1 }); // Sort by newest first
+
     res.json(courses);
   } catch (error) {
     res
@@ -17,7 +45,7 @@ export const getCourse = async (req, res) => {
   try {
     const course = await Course.findById(req.params.id)
       .populate("category", "name")
-      .populate("instructor", "name");
+      .populate("instructor", "name email");
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
@@ -31,13 +59,15 @@ export const getCourse = async (req, res) => {
 
 export const createCourse = async (req, res) => {
   try {
-    const { title, description, price, category, instructor } = req.body;
+    const { title, description, price, category, instructor, duration, level } = req.body;
     const course = await Course.create({
       title,
       description,
       price,
       category,
       instructor,
+      duration,
+      level,
     });
     res.status(201).json(course);
   } catch (error) {

@@ -2,18 +2,20 @@ import jwt from "jsonwebtoken";
 
 export const authenticateToken = (req, res, next) => {
   try {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+    const token = req.cookies.jwt;
 
     if (!token) {
-      return res.status(401).json({ message: "Access token required" });
+      return res.status(401).json({ message: "Authentication token required" });
     }
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
       if (err) {
         return res.status(403).json({ message: "Invalid or expired token" });
       }
-      req.user = user; // Attach user info to request
+      req.user = {
+        id: user.userId, // Map userId from JWT payload to id
+        role: user.role
+      }; // Attach user info to request
       next();
     });
   } catch (error) {

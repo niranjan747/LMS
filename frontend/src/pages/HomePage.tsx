@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const HomePage: React.FC = () => {
   return (
@@ -17,7 +18,7 @@ const HomePage: React.FC = () => {
       </section>
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-          <div className="bg-white text-center p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-500">
+          <Link to="/courses" className="bg-white text-center p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-500 cursor-pointer">
             <div className="flex justify-center mb-4">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,7 +32,7 @@ const HomePage: React.FC = () => {
             <p className="text-gray-600">
               Explore our wide range of courses across different categories
             </p>
-          </div>
+          </Link>
           <div className="bg-white text-center p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-500">
             <div className="flex justify-center mb-4">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">

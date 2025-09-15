@@ -66,11 +66,14 @@ const RegisterPage: React.FC = () => {
 
     try {
       // Determine the correct API endpoint based on role
-      const endpoint = formData.role === 'instructor' 
-        ? '/api/auth/register/instructor' 
-        : '/api/auth/register';
+      let endpoint = '/api/auth/register';
+      if (formData.role === 'instructor') {
+        endpoint = '/api/auth/register/instructor';
+      } else if (formData.role === 'admin') {
+        endpoint = '/api/auth/register/admin';
+      }
 
-      const response = await fetch(`http://localhost:4000${endpoint}`, {
+      const response = await fetch(`${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -187,6 +190,7 @@ const RegisterPage: React.FC = () => {
                 >
                   <option value="student">Student</option>
                   <option value="instructor">Instructor</option>
+                  <option value="admin">Admin</option>
                 </select>
               </div>
             </div>

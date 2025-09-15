@@ -77,8 +77,48 @@ export const registerInstructor = async (req, res) => {
   }
 };
 
+export const registerAdmin = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "name, email and password are required" });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+
+    const user = await User.create({
+      name,
+      email,
+      passwordHash,
+      role: "admin",
+    });
+
+    return res.status(201).json({
+      message: "Admin registered successfully",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error registering admin", error: error.message });
+  }
+};
+
 export const loginUser = async (req, res) => {
-  try {    
+  try {
     const { email, password } = req.body;
     if (!email || !password) {
       return res
@@ -98,32 +138,24 @@ export const loginUser = async (req, res) => {
 
     // create and return a token (JWT) in a real application
     const payload = { userId: user.id, role: user.role };
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: "2d" },
-      (err, token) => {
-        if (err) throw err;
-
-        // Set JWT cookie with 24 hours maxAge
-        res.cookie('jwt', token, {
-          maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict'
-        });
-
-        return res.status(200).json({
-          message: "Login successful",
-          token,
-          user: {
-            name: user.name,
-            id: user.id,
-            role: user.role,
-          },
-        });
-      }
-    );
+    const token = await jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "2d",
+    });
+    res.cookie("jwt", token, {
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        name: user.name,
+        id: user.id,
+        role: user.role,
+      },
+    });
   } catch (error) {
     return res
       .status(500)
@@ -137,7 +169,9 @@ export const checkAuth = async (req, res) => {
     const token = req.cookies.jwt;
 
     if (!token) {
-      return res.status(401).json({ message: "No authentication token provided" });
+      return res
+        .status(401)
+        .json({ message: "No authentication token provided" });
     }
 
     // Verify the JWT token
@@ -165,30 +199,34 @@ export const checkAuth = async (req, res) => {
           },
         });
       } catch (error) {
-        return res.status(500).json({ message: "Error fetching user data", error: error.message });
+        return res
+          .status(500)
+          .json({ message: "Error fetching user data", error: error.message });
       }
     });
   } catch (error) {
-    return res.status(500).json({ message: "Authentication check failed", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Authentication check failed", error: error.message });
   }
 };
 
 export const logoutUser = async (req, res) => {
   try {
     // Clear the JWT cookie
-    res.clearCookie('jwt', {
+    res.clearCookie("jwt", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
     });
 
     return res.status(200).json({
-      message: "Logout successful"
+      message: "Logout successful",
     });
   } catch (error) {
     return res.status(500).json({
       message: "Error during logout",
-      error: error.message
+      error: error.message,
     });
   }
 };

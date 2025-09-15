@@ -60,7 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async (): Promise<void> => {
     try {
       setIsLoading(true);
-      const response = await fetch('http://localhost:4000/api/auth/logout', {
+      const response = await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
       });

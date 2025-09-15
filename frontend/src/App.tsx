@@ -9,6 +9,10 @@ import HelpPage from './pages/HelpPage';
 import FaqPage from './pages/FaqPage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
+import CreateCoursePage from './pages/CreateCoursePage';
+import CreateCategoryPage from './pages/CreateCategoryPage';
+import CoursesPage from './pages/CoursesPage';
+import CoursePage from './pages/CoursePage';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 
@@ -29,6 +33,10 @@ function App() {
               <Route path="/faq" element={<FaqPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/terms" element={<TermsPage />} />
+              <Route path="/courses" element={<CoursesPage />} />
+              <Route path="/courses/:id" element={<CoursePage />} />
+              <Route path="/create-course" element={<CreateCoursePage />} />
+              <Route path="/create-category" element={<CreateCategoryPage />} />
             </Routes>
           </main>
           <Footer />
