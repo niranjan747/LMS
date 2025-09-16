@@ -241,7 +241,7 @@ const CoursesPage: React.FC = () => {
                         </h3>
                       </Link>
                       <div className="flex items-center space-x-2 mb-2">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <span className="inline-flex items-center px-2.5 py-0.5 text-center rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                           {course.category?.name || "Uncategorized"}
                         </span>
                         {course.level && (

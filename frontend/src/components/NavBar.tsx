@@ -37,6 +37,18 @@ const NavBar: React.FC = () => {
               >
                 Courses
               </Link>
+              {user && user.role === 'admin' && (
+                <Link
+                  to="/admin-dashboard"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                    isActive('/admin-dashboard')
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                  }`}
+                >
+                  Admin Dashboard
+                </Link>
+              )}
             </div>
           </div>
 
@@ -106,6 +118,16 @@ const NavBar: React.FC = () => {
           >
             Courses
           </Link>
+          {user && user.role === 'admin' && (
+            <Link
+              to="/admin-dashboard"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                isActive('/admin-dashboard') ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+              }`}
+            >
+              Admin Dashboard
+            </Link>
+          )}
           {user ? (
             <>
               <div className="px-3 py-2 text-base font-medium text-gray-700">

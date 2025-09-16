@@ -24,3 +24,11 @@ export const authenticateToken = (req, res, next) => {
       .json({ message: "Error authenticating token", error: error.message });
   }
 };
+
+export const requireAdmin = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    return res.status(403).json({ message: 'Admin access required' });
+  }
+};

@@ -13,6 +13,7 @@ import CreateCoursePage from './pages/CreateCoursePage';
 import CreateCategoryPage from './pages/CreateCategoryPage';
 import CoursesPage from './pages/CoursesPage';
 import CoursePage from './pages/CoursePage';
+import AdminDashboard from './pages/AdminDashboard';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 
@@ -37,6 +38,7 @@ function App() {
               <Route path="/courses/:id" element={<CoursePage />} />
               <Route path="/create-course" element={<CreateCoursePage />} />
               <Route path="/create-category" element={<CreateCategoryPage />} />
+              <Route path="/admin-dashboard" element={<AdminDashboard />} />
             </Routes>
           </main>
           <Footer />
